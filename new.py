@@ -96,7 +96,7 @@ def send_email_notification(name, mail_id, sport_type, slot_time,sport_type1,slo
     
 
     subject = f"Slot Approval: {name} has booked a slot"
-    body = f"Dear DR. Hemachandran K,\n\n{name} has booked a slot for {Classroom} at {slot_time} or {slot_time1}. Please review and approve the slot.\n\nBest regards,\nAI Reseach Centre"
+    body = f"Dear Subha Minz,\n\n{name} has booked a slot for {Classroom} at {slot_time} or {slot_time1}. Please review and approve the slot.\n\nBest regards,\nAI Reseach Centre Woxsen University"
 
     # Create MIMEText and MIMEMultipart objects
     msg = MIMEMultipart()
