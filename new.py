@@ -284,7 +284,7 @@ def slot_main():
 
                         st.button("Refresh", key="Refresh_button")
 
-            else:
+        else:
                 st.error("You are not allowed to book a slot. Please enter Woxsen mail ID")
 
 
