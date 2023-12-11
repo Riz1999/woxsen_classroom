@@ -186,7 +186,7 @@ def cl(gsheet_connector, name,mail_id,contact):
                                         
                                         
                                         send_email_notification(name, mail_id,"","", sport_type1, slot_time1)
-                            st.button("refresh", key="refresh_button")
+                            st.button("Refresh", key="Refresh_button")
             
                 
 
@@ -277,7 +277,7 @@ def slot_main():
 
                                                 send_email_notification(name, mail_id, "", "", "", slot_time1, Classroom)
 
-                                    st.button("refresh", key="refresh_button")
+                                    st.button("Refresh", key="Refresh_button")
 
                     
                         
