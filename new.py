@@ -85,10 +85,10 @@ def connect_to_gsheet():
 def send_email_notification(name, mail_id, sport_type, slot_time,sport_type1,slot_time1):
  
    
-    smtp_server = "smtp.gmail.com"
+    smtp_server = "smtp.office365.com"
     smtp_port = 587
-    smtp_username = "woxsenlab@gmail.com"
-    smtp_password = "smagwihgknrxevvq"
+    smtp_username = "airesearchcentre@woxsen.edu.in"
+    smtp_password = "Mar00265"
     recipient_email = "rizwan.zhad@woxsen.edu.in"
 
     # Email content
