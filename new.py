@@ -275,7 +275,8 @@ def slot_main():
                                                 st.write("**Classroom:**", Classroom)
                                                 st.write("**Slot Time:**", slot_time1)
 
-                                                send_email_notification(name, mail_id, "", "", Classroom, slot_time1)
+                                                send_email_notification(name, mail_id, "", "", "", slot_time1, Classroom)
+
                                     st.button("refresh", key="refresh_button")
 
                     
