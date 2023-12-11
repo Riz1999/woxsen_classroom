@@ -96,9 +96,9 @@ def send_email_notification(name, mail_id, sport_type, slot_time,sport_type1,slo
     
 
     subject = f"Slot Approval: {name} has booked a slot"
-    body = f"Dear DR. Hemachandran K,\n\n{name} has booked a slot for {sport_type} at {slot_time} or {slot_time1}. Please review and approve the slot.\n\nBest regards,\nAI Reseach Centre Woxsen Univeristy"
+    body = f"Dear DR. Hemachandran K,\n\n{name} has booked a slot for {sport_type} at {slot_time} or {slot_time1}. Please review and approve the slot.\n\nBest regards,\nAI Reseach Centre"
 
-            # Create MIMEText and MIMEMultipart objects
+    # Create MIMEText and MIMEMultipart objects
     msg = MIMEMultipart()
     msg['From'] = smtp_username
     msg['To'] = recipient_email
@@ -121,7 +121,7 @@ def send_email_notification(name, mail_id, sport_type, slot_time,sport_type1,slo
 
 
 def cl(gsheet_connector, name,mail_id,contact):
-    sports =["Select Your Classroom","LT1 (122 Seats)","LT2 (102 Seats)","LT3 (68 Seats)","LT5 (68 Seats)","LT6 (40)","19 (80 Seats)","20 (80 Seats)","21 (80 Seats)","22 (80 Seats)","118 (80 Seats)","119 (80 Seats)","120 (80 Seats)","121 (80 Seats)"]
+    sports = ["Select Your Classroom","LT1 (122 Seats)","LT2 (102 Seats)","LT3 (68 Seats)","LT5 (68 Seats)","LT6 (40)","19 (80 Seats)","20 (80 Seats)","21 (80 Seats)","22 (80 Seats)","118 (80 Seats)","119 (80 Seats)","120 (80 Seats)","121 (80 Seats)"]
     
     sport_type1 = st.selectbox("Classroom",sports)
     if sport_type1 != "Select Your Classroom":
@@ -202,7 +202,7 @@ def slot_main():
     col1, col2, col3 = st.columns([0.2,2,0.2])
 
     with col2:
-        st.title("BOOKINGS FOR GUEST SESSIONS")
+        st.title("BOOKINGS FOR GUEST SESSION")
 
     gsheet_connector = connect_to_gsheet()
     
@@ -230,6 +230,7 @@ def slot_main():
             if len(name) != 0 and len(contact) != 0 and len(mail_id) != 0:
                 
                 games =["Select Your Classroom","LT1 (122 Seats)","LT2 (102 Seats)","LT3 (68 Seats)","LT5 (68 Seats)","LT6 (40)","19 (80 Seats)","20 (80 Seats)","21 (80 Seats)","22 (80 Seats)","118 (80 Seats)","119 (80 Seats)","120 (80 Seats)","121 (80 Seats)"]
+                Classroom = st.selectbox("Classroom",games)
                 if Classroom != "Select Your Classroom":
                                 df = get_data(gsheet_connector,date)
                                 time_df = df[df["Classroom"] == Classroom]
