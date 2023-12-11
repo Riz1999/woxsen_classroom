@@ -202,7 +202,7 @@ def slot_main():
     col1, col2, col3 = st.columns([0.2,2,0.2])
 
     with col2:
-        st.title("CLASSROOM BOOKING FOR FACULTY")
+        st.title("BOOKING FOR GUEST SESSIONS")
 
     gsheet_connector = connect_to_gsheet()
     
