@@ -201,7 +201,10 @@ def slot_main():
     col1, col2, col3 = st.columns([0.2,2,0.2])
 
     with col2:
-        st.title("BOOKINGS FOR GUEST SESSION")
+    st.markdown(
+        '<h1 style="color:#1261A0; text-align:center;">BOOKINGS FOR GUEST SESSION</h1>',
+        unsafe_allow_html=True
+    )
 
     gsheet_connector = connect_to_gsheet()
     
