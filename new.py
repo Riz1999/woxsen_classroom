@@ -19,7 +19,7 @@ GSHEET_URL = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}"
 def header2(url): 
     st.markdown(f'<p style="color:#1261A0;font-size:40px;border-radius:2%;"><center><strong>{url}</strong></center></p>', unsafe_allow_html=True)
 
-def get_data(gsheet_connector,date) -> pd.DataFrame:
+def get_data(gsheet_connector,date, email) -> pd.DataFrame:
     values = (
         gsheet_connector.values()
         .get(
@@ -34,7 +34,7 @@ def get_data(gsheet_connector,date) -> pd.DataFrame:
     df = df[1:]
 
     df["Date"] = pd.to_datetime(df["Date"])  # Assuming your date column is named "Date"
-    df = df[df["Date"].dt.date == date]
+    df = df[(df["Date"].dt.date == date)  & (df["Woxsen mail id"] == email)]
 
     return df
 
@@ -118,80 +118,6 @@ def send_email_notification(name, mail_id, sport_type, slot_time,sport_type1,slo
         server.quit()
 
 
-
-def cl(gsheet_connector, name,mail_id,contact):
-    sports = ["Select Your Classroom","LT1 (122 Seats)","LT2 (102 Seats)","LT3 (68 Seats)","LT5 (68 Seats)","LT6 (40)","19 (80 Seats)","20 (80 Seats)","21 (80 Seats)","22 (80 Seats)","118 (80 Seats)","119 (80 Seats)","120 (80 Seats)","121 (80 Seats)"]
-    
-    sport_type1 = st.selectbox("Classroom",sports)
-    if sport_type1 != "Select Your Classroom":
-
-                        df = get_data(gsheet_connector)
-                        time_df = df[df["Classroom"] == sport_type1]
-
-                        booked = list(time_df["Slot Timing"])
-
-                        all_slots = []
-
-                        UTC = pytz.utc
-                        IST = pytz.timezone('Asia/Kolkata')
-
-                        hr = str(datetime.now(IST).time())
-
-                        if int(hr[0:2]) == 23:
-                            header2("Booking opens at 12AM")
-
-                        else:
-                            # Generate time slots from 5 AM to 11 AM
-                            for i in range(5, 8):
-                                x = "{:02d}:00 - {:02d}:00".format(i, i + 1)
-                                all_slots.append(x)
-
-                            new_slots = ["-"]
-
-                            for s in all_slots:
-                                if s not in booked:
-                                    new_slots.append(s)
-
-                            #del_slots = []
-                            
-                            # Generate time slots from 4 PM to 11 PM
-                            for i in range(16, 23):
-                                x = "{:02d}:00 - {:02d}:00".format(i, i + 1)
-                                all_slots.append(x)
-
-                            new_slots = ["-"]
-
-                            for s in all_slots:
-                                if s not in booked:
-                                    new_slots.append(s)
-
-
-                            if len(new_slots) == 1:
-                                header2("No Slots Available")
-
-                            else:
-                                slot_time1 = st.selectbox("Choose your time slot", new_slots)
-
-                                if slot_time1 != "-":
-                                    if st.button("Submit"):
-                                        add_row_to_gsheet(
-                                            gsheet_connector, [[name, mail_id, contact, sport_type1, slot_time1]]
-                                        )
-                                        header2("Your slot has been booked!")
-                                        st.success(" **Take a Screenshot of the slot details** ")
-                                        st.write("**Name:**",name)
-                                        st.write("**Classroom:**", sport_type1)
-                                        st.write("**Slot Time:**", slot_time1)
-                                        
-                                        
-                                        send_email_notification(name, mail_id,"","", sport_type1, slot_time1)
-                            st.button("Refresh", key="Refresh_button")
-            
-                
-
-
-
-
 def slot_main():
 
     col1, col2, col3 = st.columns([0.4,1,0.2])
@@ -231,8 +157,14 @@ def slot_main():
                         "119 (80 Seats)", "120 (80 Seats)", "121 (80 Seats)"]
                 Classroom = st.selectbox("Classroom", games)
                 if Classroom != "Select Your Classroom":
-                    df = get_data(gsheet_connector, date)
-                    time_df = df[df["Classroom"] == Classroom]
+                    df_email = get_data(gsheet_connector, date, mail_id)
+
+                    if len(df_email) < 2:  # Allowing maximum 2 bookings per email
+                        df = get_data(gsheet_connector, date,mail_id)
+                        time_df = df[df["Classroom"] == Classroom]
+                    
+                    else:
+                        st.error("Maximum booking limit reached for this email ID")
 
                     booked = list(time_df["Slot Timing"])
 
