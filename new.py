@@ -150,21 +150,25 @@ def slot_main():
             name = st.text_input("Enter your Name")
             contact = st.text_input("Enter your contact")
             date = st.date_input("Select Date", datetime.now().date())
+            date_today = datetime.now().date()
 
-            if len(name) != 0 and len(contact) != 0 and len(mail_id) != 0:
-                games = ["Select Your Classroom", "LT1 (122 Seats)", "LT2 (102 Seats)", "LT3 (68 Seats)", "LT5 (68 Seats)",
-                        "LT6 (40)", "19 (80 Seats)", "20 (80 Seats)", "21 (80 Seats)", "22 (80 Seats)", "118 (80 Seats)",
-                        "119 (80 Seats)", "120 (80 Seats)", "121 (80 Seats)"]
-                Classroom = st.selectbox("Classroom", games)
-                if Classroom != "Select Your Classroom":
-                    df_email = get_data(gsheet_connector, date, mail_id)
+            if date < date_today:
+                st.error("Please select a date starting from today.")   
+            else:
+                if len(name) != 0 and len(contact) != 0 and len(mail_id) != 0:
+                    games = ["Select Your Classroom", "LT1 (122 Seats)", "LT2 (102 Seats)", "LT3 (68 Seats)", "LT5 (68 Seats)",
+                            "LT6 (40)", "19 (80 Seats)", "20 (80 Seats)", "21 (80 Seats)", "22 (80 Seats)", "118 (80 Seats)",
+                            "119 (80 Seats)", "120 (80 Seats)", "121 (80 Seats)"]
+                    Classroom = st.selectbox("Classroom", games)
+                    if Classroom != "Select Your Classroom":
+                        df_email = get_data(gsheet_connector, date, mail_id)
 
-                    if len(df_email) < 2:  # Allowing maximum 2 bookings per email
-                        df = get_data(gsheet_connector, date,mail_id)
-                        time_df = df[df["Classroom"] == Classroom]
-                    
-                    else:
-                        st.error("Maximum booking limit reached for this email ID")
+                        if len(df_email) >= 2:
+                            st.error("Maximum booking limit reached for this email ID")
+                            return
+
+                    df = get_data(gsheet_connector, date, mail_id)
+                    time_df = df[df["Classroom"] == Classroom]
 
                     booked = list(time_df["Slot Timing"])
 
