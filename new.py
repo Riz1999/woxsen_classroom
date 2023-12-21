@@ -117,13 +117,6 @@ def send_email_notification(name, mail_id, sport_type, slot_time,sport_type1,slo
     finally:
         server.quit()
 
-disclaimer_html = """
-    <div style="background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-top: 20px;">
-        <p><strong>Disclaimer:</strong></p>
-        <p>1. Each user can book a maximum of 2 sessions per day.</p>
-        <p>2. Please book classes according to the number of students expected to attend the session.</p>
-    </div>
-"""
 
 def slot_main():
     
