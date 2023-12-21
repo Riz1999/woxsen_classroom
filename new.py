@@ -125,7 +125,7 @@ def slot_main():
 
     col1, col2, col3 = st.columns([0.2, 2, 0.2])
     with col2:
-        st.title("BOOKINGS FOR GUEST SESSION")
+        st.title("BOOKINGS FOR SESSION")
 
     gsheet_connector = connect_to_gsheet()
 
