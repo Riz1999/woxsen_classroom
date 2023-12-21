@@ -119,31 +119,26 @@ def send_email_notification(name, mail_id, sport_type, slot_time,sport_type1,slo
 
 
 def slot_main():
-
-    col1, col2, col3 = st.columns([0.4,1,0.2])
+    col1, col2, col3 = st.columns([0.4, 1, 0.2])
     with col2:
-        st.image("Logo.png",width = 300)
+        st.image("Logo.png", width=300)
 
-    col1, col2, col3 = st.columns([0.2,2,0.2])
-
+    col1, col2, col3 = st.columns([0.2, 2, 0.2])
     with col2:
         st.title("BOOKINGS FOR GUEST SESSION")
 
     gsheet_connector = connect_to_gsheet()
-    
+
     UTC = pytz.utc
     IST = pytz.timezone('Asia/Kolkata')
 
     current_time = datetime.now(IST).time()
-    
-           
+
     hr = str(datetime.now(IST).time())
-    
+
     if int(hr[0:2]) == 22 or int(hr[0:2]) == 23:
         header2("Booking opens at 12AM")
-
     else:
-
         mail_id = st.text_input("Enter your woxsen Mail ID")
 
         if len(mail_id) == 0 or "woxsen.edu.in" in mail_id:
@@ -153,44 +148,58 @@ def slot_main():
             date_today = datetime.now().date()
 
             if date < date_today:
-                st.error("Please select a date starting from today.")   
+                st.error("Please select a date starting from today.")
             else:
+                time_df = None  # Initialize time_df
+
                 if len(name) != 0 and len(contact) != 0 and len(mail_id) != 0:
                     games = ["Select Your Classroom", "LT1 (122 Seats)", "LT2 (102 Seats)", "LT3 (68 Seats)", "LT5 (68 Seats)",
-                            "LT6 (40)", "19 (80 Seats)", "20 (80 Seats)", "21 (80 Seats)", "22 (80 Seats)", "118 (80 Seats)",
-                            "119 (80 Seats)", "120 (80 Seats)", "121 (80 Seats)"]
+                             "LT6 (40)", "19 (80 Seats)", "20 (80 Seats)", "21 (80 Seats)", "22 (80 Seats)", "118 (80 Seats)",
+                             "119 (80 Seats)", "120 (80 Seats)", "121 (80 Seats)"]
                     Classroom = st.selectbox("Classroom", games)
                     if Classroom != "Select Your Classroom":
                         df_email = get_data(gsheet_connector, date, mail_id)
 
-                        if len(df_email) >= 2:
+                        if len(df_email) < 2:  # Allowing maximum 2 bookings per email
+                            df = get_data(gsheet_connector, date, mail_id)
+                            time_df = df[df["Classroom"] == Classroom]
+
+                        else:
                             st.error("Maximum booking limit reached for this email ID")
                             return
 
-                    df = get_data(gsheet_connector, date, mail_id)
-                    time_df = df[df["Classroom"] == Classroom]
-
+                if time_df is not None:  # Check if time_df has been assigned a value
                     booked = list(time_df["Slot Timing"])
 
                     all_slots = []
 
                     # Define the time intervals for different slots
                     time_intervals = [
-                        ("09:00 - 11:00", 9, 11),
-                        ("11:00 - 13:00", 11, 13),
-                        ("14:00 - 16:00", 14, 16),
-                        ("16:00 - 18:00", 16, 18),
-                        ("18:00 - 20:00", 18, 20)
-                    ]
+                                        ("09:00 - 10:30", "09:00", "10:30"),
+                                        ("10:45 - 12:15", "10:45", "12:15"),
+                                        ("12:45 - 14:15", "12:45", "14:15"),
+                                        ("15:00 - 16:30", "15:00", "16:30"),
+                                        ("16:45 - 18:15", "16:45", "18:15"),
+                                        ("18:30 - 20:00", "18:30", "20:00")
+                                    ]
+                    def convert_to_datetime(time_str):
+                            return datetime.strptime(time_str, "%H:%M")
 
-                    IST = pytz.timezone('Asia/Kolkata')
+                    time_intervals = [(interval[0], convert_to_datetime(interval[1]), convert_to_datetime(interval[2])) for interval in time_intervals]
+
+                        # Display formatted time intervals
+                    for interval in time_intervals:
+                            slot_time = "{} - {}".format(interval[1].strftime("%H:%M"), interval[2].strftime("%H:%M"))
+                            print(f"Time Interval: {interval[0]}, Slot Time: {slot_time}")
+                            IST = pytz.timezone('Asia/Kolkata')
                     hr = str(datetime.now(IST).time())
 
                     if int(hr[0:2]) == 23:
                         header2("Booking opens at 12AM")
                     else:
                         for interval in time_intervals:
-                            slot_time = "{:02d}:00 - {:02d}:00".format(interval[1], interval[2])
+                            slot_time = "{} - {}".format(interval[1].strftime("%H:%M"), interval[2].strftime("%H:%M"))
+
                             if slot_time not in booked:
                                 all_slots.append(slot_time)
 
@@ -208,7 +217,8 @@ def slot_main():
                             if slot_time1 != "Select Slot":
                                 if st.button("Submit"):
                                     add_row_to_gsheet(
-                                        gsheet_connector, [[name, mail_id, contact, Classroom, slot_time1]], date.strftime("%Y-%m-%d")
+                                        gsheet_connector, [[name, mail_id, contact, Classroom, slot_time1]],
+                                        date.strftime("%Y-%m-%d")
                                     )
                                     header2("Your slot has been booked!")
                                     st.success(" **Take a Screenshot of the slot details** ")
@@ -221,7 +231,8 @@ def slot_main():
                         st.button("Refresh", key="Refresh_button")
 
         else:
-                st.error("You are not allowed to book a slot. Please enter Woxsen mail ID")
+            st.error("You are not allowed to book a slot. Please enter Woxsen mail ID")
+
 
 
 if __name__ == "__main__":
