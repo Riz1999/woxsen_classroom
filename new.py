@@ -119,9 +119,6 @@ def send_email_notification(name, mail_id, sport_type, slot_time,sport_type1,slo
 
 
 def slot_main():
-    
-
-    st.markdown(disclaimer_html, unsafe_allow_html=True)
     col1, col2, col3 = st.columns([0.4, 1, 0.2])
     with col2:
         st.image("Logo.png", width=300)
